@@ -1,6 +1,7 @@
 import React, { useState } from "react";
-import Navbar from "./features/navbar/Navbar";
+
 import io from "socket.io-client";
+import { NavLink, useHistory } from "react-router-dom";
 
 import Chat from "./features/chat/Chat";
 import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
@@ -9,6 +10,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 const socket = io.connect("heres ip");
 
 const App = () => {
+  const history = useHistory();
   const [username, setUsername] = useState("");
   const [room, setRoom] = useState("");
   const handlename = (e) => {
@@ -19,6 +21,8 @@ const App = () => {
   };
   const joinRoom = (e) => {
     e.preventDefault();
+    history.push("/chat");
+
     if (username && room) {
       socket.emit("join_room", room);
     }
@@ -27,7 +31,7 @@ const App = () => {
   return (
     <>
       <div>
-        <form action="">
+        <form action="" onSubmit={joinRoom}>
           <input
             type="text"
             placeholder="type your name"
@@ -44,7 +48,8 @@ const App = () => {
 
           <br />
           <br />
-          <button variant="warning" onClick={joinRoom}>
+
+          <button variant="warning" type="submit">
             Join Room
           </button>
         </form>
