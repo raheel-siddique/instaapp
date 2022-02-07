@@ -1,70 +1,63 @@
 import React, { useState } from "react";
-
 import io from "socket.io-client";
-import { NavLink, useHistory } from "react-router-dom";
+import { useHistory } from "react-router-dom";
 
+import "./App.css";
+import {
+  BrowserRouter,
+  Switch,
+  Route,
+  Link,
+  useRouteMatch,
+} from "react-router-dom";
 import Chat from "./features/chat/Chat";
-import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
-// import AuthFirebase from "./features/landingpage/auth/AuthFirebase";
+import Register from "./features/register/Register";
 
-const socket = io.connect("heres ip");
-
+const socket = io.connect("Api");
 const App = () => {
   const history = useHistory();
   const [username, setUsername] = useState("");
   const [room, setRoom] = useState("");
-  const handlename = (e) => {
-    setUsername(e.target.value);
-  };
-  const handleroom = (e) => {
-    setRoom(e.target.value);
-  };
-  const joinRoom = (e) => {
-    e.preventDefault();
-    history.push("/chat");
 
+  const joinRoom = (e) => {
+    console.log(username, room);
+    // e.preventdefault();
     if (username && room) {
+      history.push("/chat");
       socket.emit("join_room", room);
     }
-    console.log(username, room);
+  };
+  const handleChangetext = (e) => {
+    setUsername(e.target.value);
+  };
+  const handleChangeId = (e) => {
+    setRoom(e.target.value);
   };
   return (
     <>
-      <div>
-        <form action="" onSubmit={joinRoom}>
-          <input
-            type="text"
-            placeholder="type your name"
-            onChange={handlename}
-          />
-          <br />
-          <br />
-
-          <input
-            type="text"
-            placeholder="type your Room Id"
-            onChange={handleroom}
-          />
-
-          <br />
-          <br />
-
-          <button variant="warning" type="submit">
-            Join Room
-          </button>
-        </form>
-      </div>
-      <Router>
+      {/* <Register
+        socket={socket}
+        handleChangetext={handleChangetext}
+        handleChangeId={handleChangeId}
+        joinRoom={joinRoom}
+      /> */}
+      <BrowserRouter>
         <Switch>
-          <Route
-            path="/chat"
-            exact
-            component={() => (
-              <Chat socket={socket} username={username} room={room} />
-            )}
-          />
+          <Route exact path="/">
+            <Register
+              socket={socket}
+              handleChangetext={handleChangetext}
+              handleChangeId={handleChangeId}
+              joinRoom={joinRoom}
+              username={username}
+              room={room}
+            />
+          </Route>
+          <Route path="/chat">
+            <Chat />
+          </Route>
         </Switch>
-      </Router>
+      </BrowserRouter>
     </>
   );
 };

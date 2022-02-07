@@ -1,38 +1,46 @@
-import React, { useState } from "react";
+import React from "react";
+import { useState } from "react";
 
-const Chat = ({ socket, username, room }) => {
-  const [currMessage, setCurrMessage] = useState("");
+const Chat = ({ username, room, socket }) => {
+  //   useEffect(() => {
+  //     socket.on("receive_message", (data) => {
+  //       console.log(data);
+  //     });
+  //   }, [socket]);
+  const [currMsg, setCurrMsg] = useState("");
 
   const sendMessage = async () => {
-    if (currMessage) {
-      const messageData = {
+    if (currMsg) {
+      const msgData = {
         room: room,
         author: username,
-        message: currMessage,
+        msg: currMsg,
         time:
           new Date(Date.now()).getHours() +
           ":" +
           new Date(Date.now()).getMinutes(),
       };
-      await socket.emit("send message", messageData);
+      await socket.emit("send_message", msgData);
     }
   };
+
   return (
     <>
-      <div className="mainchat">
-        <div className="chat-head">
-          <h1>LiveChat</h1>
+      {" "}
+      <div className="chat-window">
+        <div className="chat-header">
+          <p>R & F Chat</p>
         </div>
         <div className="chat-body"></div>
-        <div className="chat-foot">
+        <div className="chat-footer">
           <input
             type="text"
-            placeholder="enter"
+            placeholder="Enter..."
             onChange={(event) => {
-              setCurrMessage(event.target.value);
+              setCurrMsg(event.target.value);
             }}
           />
-          <button onClick={sendMessage}>send</button>
+          <button onClick={sendMessage}>Send</button>
         </div>
       </div>
     </>
